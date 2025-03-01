@@ -4,21 +4,33 @@ import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 import Index from './pages/Index.jsx'
 import Register from './pages/Register.jsx'
 import Login from './pages/Login.jsx'
+import Main from './layouts/Main.jsx'
+import Profile from './pages/profile/Index.jsx'
 
 const App = () => {
   const router = createBrowserRouter([
       {
         path: "/",
-        element: <Index/>
+        element: <Main/>,
+        children: [
+          {
+            index: true,
+            element: <Index/>
+          },
+          {
+            path: "/register",
+            element: <Register/>
+          },
+          {
+            path: "/login",
+            element: <Login/>
+          },
+          {
+            path: "/profile",
+            element: <Profile/>
+          }
+        ]
       },
-      {
-        path: "/register",
-        element: <Register/>
-      },
-      {
-        path: "/login",
-        element: <Login/>
-      }
   ])
   return <RouterProvider router={router}/>
 }

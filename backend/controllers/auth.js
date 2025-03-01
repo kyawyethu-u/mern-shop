@@ -48,18 +48,15 @@ exports.login = async(req,res,next) => {
         return res.status(400).json({
             isSuccess: false,
             message: errors.array()[0].msg,
-            
         })
     }
     const {password,email} = req.body;
-
     try{
         //check emil exists 
         const userDoc = await User.findOne({email})
         if(!userDoc){
             throw new Error("E-mail does not exists")
         }
-
         //check password
         const isMatch = await bcrypt.compare(password,userDoc.password)
         if(!isMatch){
@@ -67,14 +64,11 @@ exports.login = async(req,res,next) => {
         }
         //create jwt token
         const token = jwt.sign({userId : userDoc._id},process.env.JWT_KEY,{expiresIn: "1d"})
-
        return res.status(200).json({
         isSuccess: true,
         message: "Login successfully",
         token,
        })
-
-
     }catch(error){
         return res.status(401).json({
             isSuccess: false,
