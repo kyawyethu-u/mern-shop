@@ -4,12 +4,15 @@ import { useState } from 'react'
 
 import {registerUser} from "../apicalls/auth" 
 import { loginUser } from '../apicalls/auth'
+import { useDispatch } from 'react-redux'
+import {setUserId} from "../store/slices/userSlice"
 
 
 
 const AuthForm = ({isLoginPage}) => {
         const [submitting,setSubmitting] = useState(false);
-        const navigate = useNavigate()
+        const dispatch = useDispatch();
+        const navigate = useNavigate();
         
         const handleOnFinish =async(values) =>{
         setSubmitting(true);
@@ -18,7 +21,8 @@ const AuthForm = ({isLoginPage}) => {
           const response = await loginUser(values);
           if (response.isSuccess) {
               message.success(response.message);
-              localStorage.setItem("token",response.token)
+              localStorage.setItem("token",response.token);
+              dispatch(setUserId(response.token))
               navigate("/")
             } else {
               throw new Error(response.message);

@@ -22,3 +22,15 @@ import {axiosInstance} from "/src/apicalls/axiosInstance.js"
         return error.message;
     }
  }   
+
+ //check or get current user
+ export const checkCurrentUser = async()=>{
+    try{
+        const response = await axiosInstance.get("/get-current-user",
+            {validateStatus: () => true}
+        )
+        return response.data;
+    }catch(error){
+        return error.message;
+    }
+ }

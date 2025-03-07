@@ -62,7 +62,7 @@ exports.login = async(req,res,next) => {
         if(!isMatch){
             throw new Error("Invalid password")
         }
-        //create jwt token
+        //create jwt token(jwt.sign for token encryption)
         const token = jwt.sign({userId : userDoc._id},process.env.JWT_KEY,{expiresIn: "1d"})
        return res.status(200).json({
         isSuccess: true,
@@ -76,3 +76,21 @@ exports.login = async(req,res,next) => {
         })
     }
 }
+
+exports.checkCurrentUser = async(req,res) => {
+    try{
+        const userDoc = await User.findById(req.userId).select("name email role")
+        if(!userDoc){
+            throw new Error("Unauthorized user")
+        }
+        return res.status(200).json({
+            isSuccess: true,
+            message: "User is authorized",
+            userDoc
+        })
+    }catch(error){
+        return res.status("401").json({
+            isSuccess: false,
+            message: error.message
+    })
+}}
