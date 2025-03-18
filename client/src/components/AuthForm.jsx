@@ -4,8 +4,9 @@ import { useState } from 'react'
 
 import {registerUser} from "../apicalls/auth" 
 import { loginUser } from '../apicalls/auth'
+
 import { useDispatch } from 'react-redux'
-import {setUserId} from "../store/slices/userSlice"
+import {setUser} from "../store/slices/userSlice"
 
 
 
@@ -22,7 +23,7 @@ const AuthForm = ({isLoginPage}) => {
           if (response.isSuccess) {
               message.success(response.message);
               localStorage.setItem("token",response.token);
-              dispatch(setUserId(response.token))
+              dispatch(setUser(response.token))
               navigate("/")
             } else {
               throw new Error(response.message);

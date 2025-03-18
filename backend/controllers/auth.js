@@ -89,7 +89,7 @@ exports.checkCurrentUser = async(req,res) => {
             userDoc
         })
     }catch(error){
-        return res.status("401").json({
+        return res.status(401).json({
             isSuccess: false,
             message: error.message
     })

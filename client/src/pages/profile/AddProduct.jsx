@@ -1,9 +1,13 @@
 import { SquaresPlusIcon } from '@heroicons/react/24/solid';
-import { Checkbox, Col, Form, Input, Row, Select } from 'antd'
+import { Checkbox, Col, Form, Input, message, Row, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import React from 'react'
+import { sellProduct } from '../../apicalls/product';
 
-const AddProduct = () => {
+
+const AddProduct = ({setActiveTabKey}) => {
+    const [form] = Form.useForm()
+
     const options =  [
         { value: 'clothing_and_fashion', label: 'Clothing and Fashion' },
         { value: 'electronics_and_gadgets', label: 'Electronics and Gadgets' },
@@ -36,11 +40,29 @@ const AddProduct = () => {
         label: 'Vocher',
         value: 'Vocher',
       },]
+
+      const onFinishHandler = async(values) =>{
+        try{
+            const response = await sellProduct(values);
+            if (response.isSuccess) {
+               form.resetFields()
+                message.success(response.message);
+               setActiveTabKey("1")
+              } else {
+                throw new Error(response.message);
+              }
+             
+            } catch (err) {
+              message.error(err.message);
+            }
+      }
   return <section>
     <h1 className='text-3xl font-bold my-2'>What you want to sell?</h1>
-    <Form layout='vertical'>
-            <Form.Item name="product-name" 
-                label="Product-name"
+    <Form layout='vertical'
+          form={form}
+          onFinish={onFinishHandler}>
+            <Form.Item name="product_name" 
+                label="Name"
                 rules={[{
                     required: true,
                     message: "Product name must be include"
@@ -51,8 +73,8 @@ const AddProduct = () => {
                     <Input placeholder='product name ...'/>
                     
             </Form.Item>
-            <Form.Item name="price" 
-                label="Product-description"
+            <Form.Item name="product_description" 
+                label="Description"
                 rules={[{
                     required: true,
                     message: "Product description must contain"
@@ -75,6 +97,7 @@ const AddProduct = () => {
                 hasFeedback>
                     <Input type="number" />
                 </Form.Item>
+                
                </Col>
 
                <Col span={8}>
@@ -92,7 +115,7 @@ const AddProduct = () => {
                </Col>
 
                <Col span={8}>
-               <Form.Item name="product-used_for" 
+               <Form.Item name="product_usedFor" 
                 label="Used for"
                 rules={[{
                     required: true,
@@ -105,7 +128,7 @@ const AddProduct = () => {
             </Form.Item>
                </Col>
             </Row>
-            <Form.Item name="product-details" 
+            <Form.Item name="product_details" 
                 label="This product must have"
                 rules={[{
                     required: true,
