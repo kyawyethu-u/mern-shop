@@ -17,4 +17,9 @@ router.post("/create-product",authMiddleware,[
      body("product_details").isArray().withMessage("Product details must array!"),
     ],productController.addNewProduct);
 
+//get all products
+// GET /products
+router.get("/products",authMiddleware,productController.getAllProducts)
+
+
 module.exports = router;

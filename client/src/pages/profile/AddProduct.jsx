@@ -2,6 +2,7 @@ import { SquaresPlusIcon } from '@heroicons/react/24/solid';
 import { Checkbox, Col, Form, Input, message, Row, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import React from 'react'
+
 import { sellProduct } from '../../apicalls/product';
 
 
@@ -51,7 +52,7 @@ const AddProduct = ({setActiveTabKey}) => {
               } else {
                 throw new Error(response.message);
               }
-             
+              
             } catch (err) {
               message.error(err.message);
             }

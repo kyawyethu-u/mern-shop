@@ -55,7 +55,8 @@ const AuthForm = ({isLoginPage}) => {
         <h1 className='text-3xl font-bold mb-4 text-blue-600'>POINT.io-{isLoginPage ? "LOGIN" : "REGISTER"}</h1>
             <Form layout='vertical' onFinish={handleOnFinish}>
               {
-                !isLoginPage &&   <Form.Item 
+                !isLoginPage &&  
+                 <Form.Item 
                 name="name" 
                 label="Name" 
                 rules={[{
@@ -67,7 +68,6 @@ const AuthForm = ({isLoginPage}) => {
                     message: "Name must have 3 characters"
                     }]}>
                     <Input placeholder='name...'>
-
                     </Input>
                 </Form.Item>
               }
@@ -96,7 +96,6 @@ const AuthForm = ({isLoginPage}) => {
                     message: "Password must have 5 characters"
                 }]}>
                     <Input.Password placeholder='password'>
-                        
                     </Input.Password>
                 </Form.Item>
                 <Form.Item>
