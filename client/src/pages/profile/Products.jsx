@@ -1,47 +1,49 @@
-import { useEffect, useState } from "react";
-import { getAllProducts } from "../../apicalls/product"
+import moment  from "moment"
+import { deleteProduct } from "../../apicalls/product";
 import { message } from "antd";
 
 
-const Products = () => {
-    const [products,setProducts] = useState([])
+const Products = ({products,setActiveTabKey,setEditMode,setEditProductId,getProducts}) => {
+    
+  const editHandler = (product_id) =>{
+    setEditMode(true);
+    setActiveTabKey("2");
+    setEditProductId(product_id);
+  }
 
-    const getProducts = async() => {
-        try{
-            const response = await getAllProducts();
-            if(response.isSuccess){
-                //codes
-                setProducts(response.productDocs)
-            }else{
-                throw new Error(response.message)
+  const deleteHandler = async(product_id) => {
+    try{
+        const response = await deleteProduct(product_id);
+          if (response.isSuccess) {
+              message.success(response.message);
+              getProducts()
+            } else {
+              throw new Error(response.message);
             }
-        }catch(err){
-            message.error(err.message)
-        }
-    };
+            
+          } catch (err) {
+            message.error(err.message);
+          }}
 
-    useEffect((_) =>{
-        getProducts();
-    },[])
   return <section>
-
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
+<h1 className="text-3xl font-semibold my-2">Products List</h1>
+<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
             <tr>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3 text-left">
                     Product name
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                     Category
                 </th>
-                <th scope="col" class="px-6 py-3">
-                    Status
-                </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                     Sell Date
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
+                    Status
+                </th>
+                <th scope="col" className="px-6 py-3">
                     Action
                 </th>
             </tr>
@@ -52,18 +54,24 @@ const Products = () => {
                     <>
                     {
                         products.map(product=> (
-                <tr class="bg-white border-b" key={product._id}>
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{product.name}</th>
-                <td class="px-6 py-4">{product.category}</td>
-                <td class="px-6 py-4">{ 
-                    product.status === "pending" ? <span className="bg-yellow-400 text-sm p-1 rounded-md">{product.status}</span>:<span>{product.status}</span>
+                <tr className="bg-white border-b" key={product._id}>
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-left">{product.name}</th>
+                <td className="px-6 py-4">{product.category}</td>
+                <td className="px-6 py-4">{moment(product.createdAt).format('L')}</td>
+                <td className="px-6 py-4">{ 
+                    product.status === "pending" ? 
+                    <span className="bg-yellow-400 text-sm p-1 rounded-md">{product.status}</span>:
+                    <span className="bg-green-400 text-sm p-1 rounded-md">{product.status}</span>
                  }
                  </td>
-                <td class="px-6 py-4">{product.createdAt}</td>
 
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     <button type="button"
-                     class="font-medium text-blue-600 hover:underline">Edit</button>
+                     className="font-medium text-blue-600 hover:underline me-4"
+                     onClick={()=>{editHandler(product._id)}}>Edit</button>
+                     <button type="button"
+                     className="font-medium text-red-500 hover:underline"
+                     onClick={()=>{deleteHandler(product._id)}}>Delete</button>
                 </td>
             </tr>
                         ))
