@@ -25,6 +25,9 @@ var productSchema = new Schema({
     details: {
         type: Array,
     },
+    images: {
+        type : [String],
+    },
     status: {
         type: String,
         default: "pending"
@@ -34,6 +37,7 @@ var productSchema = new Schema({
         ref: "User",
         required: true
     },
+    
 },
 {
     timestamps: true,

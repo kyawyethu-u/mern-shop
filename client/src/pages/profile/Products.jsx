@@ -3,12 +3,18 @@ import { deleteProduct } from "../../apicalls/product";
 import { message } from "antd";
 
 
-const Products = ({products,setActiveTabKey,setEditMode,setEditProductId,getProducts}) => {
-    
+const Products = ({products,setActiveTabKey,setEditMode,setEditProductId,getProducts,setManageTabKey}) => {
   const editHandler = (product_id) =>{
     setEditMode(true);
     setActiveTabKey("2");
     setEditProductId(product_id);
+  }
+
+  const uploadHandler = (product_id) =>{
+    setEditMode(true);
+    setActiveTabKey("2");
+    setEditProductId(product_id);
+    setManageTabKey("2")
   }
 
   const deleteHandler = async(product_id) => {
@@ -66,6 +72,9 @@ const Products = ({products,setActiveTabKey,setEditMode,setEditProductId,getProd
                  </td>
 
                 <td className="px-6 py-4">
+                    <button type="button"
+                     className="font-medium text-green-600 hover:underline me-4"
+                     onClick={()=>{uploadHandler(product._id)}}>Upload</button>
                     <button type="button"
                      className="font-medium text-blue-600 hover:underline me-4"
                      onClick={()=>{editHandler(product._id)}}>Edit</button>

@@ -4,10 +4,10 @@ import TextArea from 'antd/es/input/TextArea'
 import React, { useState } from 'react'
 import { useEffect } from 'react';
 
-import { sellProduct, getOldProduct, updateProduct } from '../../apicalls/product';
+import { sellProduct, getOldProduct, updateProduct } from '../apicalls/product';
 
 
-const AddProduct = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
+const ProductForm = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
     const [form] = Form.useForm()
     const [sellerId,setSellerId] = useState(null);
    
@@ -193,4 +193,4 @@ const AddProduct = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
   </section>
 }
 
-export default AddProduct
+export default ProductForm

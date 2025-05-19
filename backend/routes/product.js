@@ -40,5 +40,16 @@ router.post("/update-product",authMiddleware,[
 //DELETE /products/:id
 router.delete("/products/:id",authMiddleware,productController.deleteProduct)
 
+//upload product images
+//POST /upload
+router.post("/upload",authMiddleware,productController.uploadProductImages)
+
+//get saved product images
+//get /product-images/:id
+router.get("/product-images/:id",authMiddleware,productController.getSavedImages)
+
+//delete product images
+//DELETE /product/images/destroy/:productId/:imgToDelete
+router.delete("/product/images/destroy/:productId/:imgToDelete",authMiddleware,productController.deleteProductImages)
 
 module.exports = router;

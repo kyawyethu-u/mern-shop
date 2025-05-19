@@ -9,6 +9,7 @@ import Profile from './pages/profile/Index.jsx'
 import AuthProvider from './providers/AuthProvider.jsx'
 
 
+
 const App = () => {
   const router = createBrowserRouter([
       {

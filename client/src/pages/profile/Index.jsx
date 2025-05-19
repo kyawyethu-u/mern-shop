@@ -1,6 +1,6 @@
 import { Form, Tabs,message } from "antd"
 import Products from "./Products"
-import AddProduct from "./AddProduct"
+import ManageProduct from "./ManageProduct"
 import General from "./General"
 
 
@@ -14,7 +14,7 @@ const Index = () => {
   const [products,setProducts] = useState([])
   const [editMode,setEditMode] = useState(false)
   const [editProductId,setEditProductId] = useState(null)
- 
+  const [manageTabKey,setManageTabKey] = useState("1")
 
   const getProducts = async() => {
       try{
@@ -31,6 +31,11 @@ const Index = () => {
   };
 
   useEffect((_) =>{
+    if(activeTabKey === "1"){
+      setEditMode(false);
+      setEditProductId(null);
+      setManageTabKey("1");
+    };
       getProducts();
   },[activeTabKey])
 
@@ -41,13 +46,13 @@ const Index = () => {
             label: 'Products',
             children: <Products products={products} setActiveTabKey={setActiveTabKey} 
              setEditMode={setEditMode} setEditProductId={setEditProductId}
-             getProducts={getProducts}/>,
+             getProducts={getProducts} setManageTabKey={setManageTabKey}/>,
           },
           {
             key: '2',
-            label: 'Manage Product',
-            children: <AddProduct setActiveTabKey={setActiveTabKey}  getProducts={getProducts}
-            editMode={editMode} editProductId={editProductId}/>,
+            label: 'Manage Products',
+            children: <ManageProduct setActiveTabKey={setActiveTabKey}  getProducts={getProducts}
+            editMode={editMode} editProductId={editProductId} manageTabKey={manageTabKey}/>,
           },
           {
             key: '3',
@@ -62,14 +67,15 @@ const Index = () => {
     ]
     const onChangeHandler = (key) =>{
       setActiveTabKey(key)
-      setEditMode(false);
       
     };
-
+     console.log(manageTabKey);
+     
   return <Tabs activeKey={activeTabKey} 
   onChange={(key) => onChangeHandler(key)}
   items={items}
-  tabPosition={"left"} />
+  tabPosition={"left"} 
+  size="large"/>
 }
 
 export default Index
