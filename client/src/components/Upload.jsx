@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import {TrashIcon} from '@heroicons/react/24/solid'
+import {TrashIcon, EllipsisHorizontalIcon} from '@heroicons/react/24/solid'
 import { deleteSavedImages, uploadImage, getSavedImages } from '../apicalls/product';
 import { message } from 'antd';
 
+import { useDispatch,useSelector } from 'react-redux';
+import { setLoader } from '../store/slices/loaderSlice';
 
 const Upload = ({editProductId,setActiveTabKey}) => {
   const [previewImages,setPreviewImages] = useState([]);
   const [images,setImages] = useState([]);
   const [savedImages, setSavedImages] = useState([]);
+
+  const [selectedImagesCount,setSelectedImagesCount] = useState(0);
+
+  const {isProcessing} = useSelector((state) => state.reducer.loader);
+  const dispatch = useDispatch();
 
   const getImages = async (product_id) => {
     try{
@@ -30,6 +37,8 @@ const Upload = ({editProductId,setActiveTabKey}) => {
   const onChangeHandler = (event) =>{
     const selectedImages = event.target.files ;
     const selectedImagesArray = Array.from(selectedImages);
+    //update selected images count
+    setSelectedImagesCount(prev => prev + selectedImagesArray.length)
     setImages((prev) => [...prev,...selectedImagesArray]);
     const previewImagesArray = selectedImagesArray.map(img => {
       return URL.createObjectURL(img);
@@ -39,6 +48,8 @@ const Upload = ({editProductId,setActiveTabKey}) => {
 //client-side delete function(deleteHandler)
   const deleteHandler = (img) =>{
     const indexToDelete = previewImages.findIndex((e) => e === img);
+    //update selected images count
+    setSelectedImagesCount(prev => prev -1);
     if(indexToDelete !== -1){
       const updatedSelectedImages = [...images];
       updatedSelectedImages.splice(indexToDelete,1);
@@ -50,29 +61,37 @@ const Upload = ({editProductId,setActiveTabKey}) => {
 
  const submitHandler = async(e) =>{
         e.preventDefault();
-        const formData = new FormData();
-        for(let i=0; i < images.length; i++){
-          formData.append("product_images",images[i]);
-        }
-        formData.append("product_id",editProductId);
-      try{
-        const response = await uploadImage(formData);
-          if (response.isSuccess) {
-              message.success(response.message);
-              setActiveTabKey("1")
-            } else {
-              throw new Error(response.message);
+        dispatch(setLoader(true));
+        if(selectedImagesCount > 1 ){
+          const formData = new FormData();
+          for(let i=0; i < images.length; i++){
+            formData.append("product_images",images[i]);
+          }
+          formData.append("product_id",editProductId);
+        try{
+          const response = await uploadImage(formData);
+            if (response.isSuccess) {
+                message.success(response.message);
+                setActiveTabKey("1")
+              } else {
+                throw new Error(response.message);
+              }
+
+            } catch (err) {
+              message.error(err.message);
             }
-          } catch (err) {
-            message.error(err.message);
-          }}
+        }else{
+          message.error("Please select at least two images");
+        }
+        dispatch(setLoader(false));
+       }
   
   const savedImageDeleteHandler = async(img) =>{
         setSavedImages(prev => prev.filter((e => e !== img)));
         try{
           const response = await deleteSavedImages({productId : editProductId ,imgToDelete : img});
           if (response.isSuccess) {
-              message.success = response.message;
+              message.success(response.message);
           } else {
             throw new Error(response.message);
           }
@@ -109,7 +128,7 @@ const Upload = ({editProductId,setActiveTabKey}) => {
         multiple
         accept='image/png,image/jpeg,image/jpg'
         onChange={onChangeHandler}/>
-        <div className=' flex-row gap-2 mt-4 '>
+        <div className='flex flex-row gap-2 mt-2 mb-6'>
           {previewImages && 
             previewImages.map((img,index) => (
             <div key={index} className='basis-1/6 h-32 relative'>
@@ -122,7 +141,13 @@ const Upload = ({editProductId,setActiveTabKey}) => {
             ))
           }
         </div>
-        <button className='block my-4 text-white bg-blue-600 rounded-md px-3 py-2 font-medium'>Upload</button>
+        {selectedImagesCount > 1 && (
+          <button 
+                  className='block my-4 text-white bg-blue-600 rounded-md px-3 py-2 font-medium'
+                  disabled={isProcessing && selectedImagesCount<1}>
+            {isProcessing ? "Uploading ..." : "Upload images"}
+          </button>
+        )}
     </form>
   </section>
 }

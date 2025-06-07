@@ -19,10 +19,15 @@ var userSchema = new Schema({
         type: String,
         default: "user"
     },
-},
-{
+    status: {
+        type: String,
+        default: "active",
+    },
+  },
+  {
     timestamps: true,
-})
+  }
+)
 
 const userModel = model("User",userSchema)
 

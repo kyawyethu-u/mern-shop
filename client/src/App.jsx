@@ -6,11 +6,13 @@ import Register from './pages/Register.jsx'
 import Login from './pages/Login.jsx'
 import Main from './layouts/Main.jsx'
 import Profile from './pages/profile/Index.jsx'
+import Admin from './pages/admin/Index.jsx'
 import AuthProvider from './providers/AuthProvider.jsx'
 
 
 
 const App = () => {
+  
   const router = createBrowserRouter([
       {
         path: "/",
@@ -18,7 +20,9 @@ const App = () => {
         children: [
           {
             index: true,
-            element: <Index/>
+            element: (<AuthProvider>
+              <Index/>
+            </AuthProvider>)
           },
           {
             path: "/register",
@@ -34,6 +38,14 @@ const App = () => {
             <AuthProvider>
             <Profile/>
             </AuthProvider>)
+          },
+          {
+            path: "/admin",
+            element: (
+              <AuthProvider>
+               <Admin/>
+              </AuthProvider>
+            )
           }
         ]
       },

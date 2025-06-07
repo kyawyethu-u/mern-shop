@@ -1,25 +1,28 @@
 import {  Form ,Input,message} from 'antd'
 import {Link, useNavigate} from "react-router-dom"
-import { useState } from 'react'
+
 
 import {registerUser} from "../apicalls/auth" 
 import { loginUser } from '../apicalls/auth'
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector} from 'react-redux'
 import {setUser} from "../store/slices/userSlice"
-
+import { setLoader } from '../store/slices/loaderSlice' 
 
 
 const AuthForm = ({isLoginPage}) => {
-        const [submitting,setSubmitting] = useState(false);
+
         const dispatch = useDispatch();
         const navigate = useNavigate();
-        
-        const handleOnFinish =async(values) =>{
-        setSubmitting(true);
+        const {isProcessing} = useSelector((state) => state.reducer.loader);
+
+    const handleOnFinish =async(values) =>{
+       dispatch(setLoader(true))
         if(isLoginPage){
         try{
           const response = await loginUser(values);
+          console.log(response.token);
+          
           if (response.isSuccess) {
               message.success(response.message);
               localStorage.setItem("token",response.token);
@@ -44,9 +47,10 @@ const AuthForm = ({isLoginPage}) => {
         } catch (err) {
           message.error(err.message);
         }
+       
        }
-       setSubmitting(false);
-        }
+       dispatch(setLoader(false))
+        };
        
         
   return (
@@ -100,10 +104,12 @@ const AuthForm = ({isLoginPage}) => {
                 </Form.Item>
                 <Form.Item>
                     <button className="w-full outline-none bg-blue-600 text-white py-2 rounded-md" 
-                    disabled={submitting}>
-                      {isLoginPage && !submitting && "LOGIN" }
-                      {!isLoginPage && !submitting && "REGISTER" }
-                      {submitting && "Submitting"}
+                            disabled={isProcessing}
+                    >
+                      {isLoginPage && !isProcessing && "LOGIN" }
+                      {!isLoginPage && !isProcessing && "REGISTER" }
+                      {isProcessing && isLoginPage && "Logging in ..."}
+                      {isProcessing && !isLoginPage && "Registering ..."}
                       </button>
                 </Form.Item>
                 <p>{isLoginPage ? 

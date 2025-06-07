@@ -69,7 +69,7 @@ const Index = () => {
       setActiveTabKey(key)
       
     };
-     console.log(manageTabKey);
+     
      
   return <Tabs activeKey={activeTabKey} 
   onChange={(key) => onChangeHandler(key)}

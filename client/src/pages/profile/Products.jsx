@@ -65,12 +65,15 @@ const Products = ({products,setActiveTabKey,setEditMode,setEditProductId,getProd
                 <td className="px-6 py-4">{product.category}</td>
                 <td className="px-6 py-4">{moment(product.createdAt).format('L')}</td>
                 <td className="px-6 py-4">{ 
-                    product.status === "pending" ? 
-                    <span className="bg-yellow-400 text-sm p-1 rounded-md">{product.status}</span>:
-                    <span className="bg-green-400 text-sm p-1 rounded-md">{product.status}</span>
-                 }
-                 </td>
-
+                        product.status === "pending" &&
+                        <span className="bg-yellow-400 text-sm p-1 rounded-md">{product.status}</span>}
+                        { 
+                        product.status === "approve" &&
+                        <span className="bg-green-400 text-sm p-1 rounded-md">{product.status}</span>}
+                        { 
+                        product.status === "reject" &&
+                        <span className="bg-red-400 text-sm p-1 rounded-md">{product.status}</span>}
+                     </td>
                 <td className="px-6 py-4">
                     <button type="button"
                      className="font-medium text-green-600 hover:underline me-4"

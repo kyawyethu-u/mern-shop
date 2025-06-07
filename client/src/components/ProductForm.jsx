@@ -1,18 +1,20 @@
-import { SquaresPlusIcon } from '@heroicons/react/24/solid';
+import { SquaresPlusIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { Checkbox, Col, Form, Input, message, Row, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import React, { useState } from 'react'
-import { useEffect } from 'react';
 
 import { sellProduct, getOldProduct, updateProduct } from '../apicalls/product';
+import { useEffect,useState } from 'react';
 
+import { useDispatch,useSelector } from 'react-redux'
+import {setLoader} from "../store/slices/loaderSlice"
 
 const ProductForm = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
     const [form] = Form.useForm()
     const [sellerId,setSellerId] = useState(null);
    
-    
-
+    const {isProcessing} = useSelector((state) => state.reducer.loader)
+    const dispatch = useDispatch()
+  
     const options =  [
         { value: 'clothing_and_fashion', label: 'Clothing and Fashion' },
         { value: 'electronics_and_gadgets', label: 'Electronics and Gadgets' },
@@ -47,7 +49,7 @@ const ProductForm = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
       },]
 
       const onFinishHandler = async(values) =>{
-
+        dispatch(setLoader(true))
         try{
           let response;
           if(editMode){
@@ -57,6 +59,7 @@ const ProductForm = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
           }else{
             response = await sellProduct(values);
           }
+          
             if (response.isSuccess) {
                form.resetFields()
                 message.success(response.message);
@@ -65,10 +68,11 @@ const ProductForm = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
               } else {
                 throw new Error(response.message);
               }
-              
             } catch (err) {
               message.error(err.message);
             }
+            dispatch(setLoader(false));
+
       };
       const getOldProductData = async() =>{
           try{
@@ -102,6 +106,7 @@ const ProductForm = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
         }},[editMode])
 
   return <section>
+    
     <h1 className='text-3xl font-bold my-2'>{editMode ?"Update your product" : "What you want to sell?"}</h1>
     <Form layout='vertical'
           form={form}
@@ -183,11 +188,12 @@ const ProductForm = ({setActiveTabKey,getProducts,editMode,editProductId}) => {
                 hasFeedback>
                 <Checkbox.Group options={checkBoxOptions} defaultValue={[""]}/>
             </Form.Item>
-        <button className='font-medium text-lg text-center my-2 rounded-md bg-blue-500 text-white flex items-center gap-2 justify-center w-full'>
-                <SquaresPlusIcon width={40}/>
-               {
-                editMode ? "Update Product" : "Sell Product"
-               }
+        <button type='submit'
+                className='font-medium text-lg text-center my-2 rounded-md bg-blue-500 text-white flex items-center gap-2 justify-center w-full'
+                disabled={isProcessing}>
+               {editMode && !isProcessing && <><SquaresPlusIcon width={30}/>Update Product</>}
+               {!editMode && !isProcessing && <><SquaresPlusIcon width={40}/>Sell Product</>}
+               {isProcessing && <EllipsisHorizontalIcon width={30}/>}
         </button>
     </Form>
   </section>
