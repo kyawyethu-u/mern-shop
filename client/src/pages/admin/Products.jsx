@@ -4,6 +4,7 @@ import { approveProduct, rejectProduct, rollbackProduct } from '../../apicalls/a
 import { message } from 'antd'
 
 const Products = ({products,getProducts}) => {
+ 
 
   const approveHandler = async(productId) =>{
     try{
@@ -14,16 +15,13 @@ const Products = ({products,getProducts}) => {
         }else{
             throw new Error(response.message)
         }
-
     }catch(err){
         message.error(err.message);
     }
-  }  
+  };
   const rejectHandler = async(productId) =>{
     try{
         const response = await rejectProduct(productId);
-        console.log(response);
-        
         if(response.isSuccess){
             message.success(response.message)
             getProducts();
@@ -76,12 +74,13 @@ const Products = ({products,getProducts}) => {
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody> 
                 {
                     products.length > 0 ? (
                         <>
                         {
-                            products.map(product=> (
+                            products.map((product)=> (
+                                
                     <tr className="bg-white border-b" key={product._id}>
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-left">{product.name}</th>
                     <td className="px-6 py-4">{product.category}</td>

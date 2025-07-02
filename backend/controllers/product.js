@@ -48,6 +48,7 @@ exports.addNewProduct = async(req,res) =>{
             })
     }}
 
+
 exports.getAllProducts = async(req,res) => {
         try{
             const productDocs = await Product.find({seller: req.userId}).sort({createdAt: -1});

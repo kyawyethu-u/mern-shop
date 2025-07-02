@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import {TrashIcon, EllipsisHorizontalIcon} from '@heroicons/react/24/solid'
-import { deleteSavedImages, uploadImage, getSavedImages } from '../apicalls/product';
+import { deleteSavedImages, uploadImage, getSavedImages } from '../../apicalls/product';
 import { message } from 'antd';
 
 import { useDispatch,useSelector } from 'react-redux';
-import { setLoader } from '../store/slices/loaderSlice';
+import { setLoader } from '../../store/slices/loaderSlice';
 
 const Upload = ({editProductId,setActiveTabKey}) => {
   const [previewImages,setPreviewImages] = useState([]);

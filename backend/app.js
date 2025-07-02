@@ -9,6 +9,7 @@ require("dotenv").config();
 const authRoutes = require('./routes/auth')
 const productRoutes = require('./routes/product')
 const adminRoutes = require('./routes/admin')
+const publicRoutes = require('./routes/public')
 
 const app = express()
 
@@ -39,6 +40,7 @@ app.use(multer({storage: storageConfig, fileFilter: filterConfig}).array("produc
 app.use(authRoutes)
 app.use(productRoutes)
 app.use("/admin",adminRoutes)
+app.use("/api",publicRoutes)
 
 mongoose.connect(process.env.MONGO_URL).then(_=>{
     app.listen(4000);

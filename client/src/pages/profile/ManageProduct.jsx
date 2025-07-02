@@ -1,8 +1,8 @@
 
 import { Tabs } from 'antd';
-import ProductForm from '../../components/ProductForm';
-import { useState } from 'react';
-import Upload from '../../components/Upload';
+import ProductForm from '../../components/Product/ProductForm';
+
+import Upload from '../../components/Product/Upload';
 
 
 

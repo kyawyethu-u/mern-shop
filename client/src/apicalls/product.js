@@ -10,7 +10,7 @@ export const sellProduct = async(payload)=>{
           return error.message;
       }
   };
-
+  
   //get all products
   export const getAllProducts =  async() =>{
     try{
@@ -93,3 +93,44 @@ export const deleteSavedImages = async(payload) =>{
         return error.message;
     }
 }
+
+////////////   Public   /////////////////////////////
+//get product categories for home page
+export const getProductCategories = async() =>{
+    try{
+        const response = await axiosInstance.get("/api/categories")
+        return response.data;
+    }catch(error){
+        return error.message
+    }
+  }
+
+  //   /api/products
+  export const getApprovedProducts = async() =>{
+    try{
+        const response = await axiosInstance.get("/api/products")
+        return response.data;
+    }catch(error){
+        return error.message
+    }
+  }
+
+  //get products by filter
+  export const getProductsByFilter = async(key,value)=>{
+    try{
+        const response = await axiosInstance.get(`/api/products/filters?${key}=${value}`)
+        return response.data;
+    }catch(error){
+        return error.message
+    }
+  }
+
+  //get product's detail by id
+  export const getProductById = async(id)=>{
+    try{
+        const response = await axiosInstance.get(`/api/products/${id}`)
+        return response.data;
+    }catch(err){
+        return err.message
+    }
+  }

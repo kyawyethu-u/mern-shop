@@ -1,13 +1,14 @@
 
 import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 
-import Index from './pages/Index.jsx'
-import Register from './pages/Register.jsx'
-import Login from './pages/Login.jsx'
+import Index from './pages/Homepage/Index.jsx'
+import Register from './pages/Auth/Register.jsx'
+import Login from './pages/Auth/Login.jsx'
 import Main from './layouts/Main.jsx'
 import Profile from './pages/profile/Index.jsx'
 import Admin from './pages/admin/Index.jsx'
 import AuthProvider from './providers/AuthProvider.jsx'
+import Details from './pages/Homepage/Details.jsx'
 
 
 
@@ -21,8 +22,8 @@ const App = () => {
           {
             index: true,
             element: (<AuthProvider>
-              <Index/>
-            </AuthProvider>)
+               <Index/>
+            </AuthProvider>) 
           },
           {
             path: "/register",
@@ -46,6 +47,10 @@ const App = () => {
                <Admin/>
               </AuthProvider>
             )
+          },
+          {
+            path: "/products/:id",
+            element: <Details/>
           }
         ]
       },
