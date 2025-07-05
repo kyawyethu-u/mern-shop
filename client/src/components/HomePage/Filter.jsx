@@ -2,13 +2,18 @@ import { message } from "antd";
 import { getProductsByFilter } from "../../apicalls/product";
 import { useState } from "react";
 
+import {useDispatch} from "react-redux"
+import {setLoader} from "../../store/slices/loaderSlice"
+
 //productCats for categories
-const Filter = ({productCats,setProducts,getApprovedProduct}) => {
+const Filter = ({productCats,setProducts,getAllProducts}) => {
   const [selectedCategory,setSelectedCategory] = useState(null)
   const uniqueCategories = [...new Set(productCats.map((product)=> product.category))]
 
   const categoryHandler = async(i) =>{
+    const dispatch = useDispatch();
     setSelectedCategory(uniqueCategories[i]);
+    dispatch(setLoader(true));
             try{
               const response = await getProductsByFilter("category",selectedCategory);
               if(response.isSuccess){
@@ -19,10 +24,11 @@ const Filter = ({productCats,setProducts,getApprovedProduct}) => {
             }catch(err){
               message.error = err.message
             }
+            dispatch(setLoader(false));        
   }
   const clearHandler = () =>{
     setSelectedCategory(null)
-    getApprovedProduct()
+    getAllProducts()
   }
          
   return (

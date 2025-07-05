@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 
 const Product = require("../models/Product");
+const SavedProduct = require("../models/SavedProduct")
 const {v2: cloudinary} = require('cloudinary');
 require("dotenv").config();
 
@@ -243,4 +244,65 @@ exports.deleteProductImages = async(req,res) =>{
         message: err.message,
         })
    }
+}
+
+exports.savedProduct = async(req,res) =>{
+    
+    try{
+        const {id} = req.params;
+        const isExists = await SavedProduct.findOne({$and :[{user_id: req.userId},{product_id: id}],
+        })
+        if(isExists){
+            throw new Error("Product is already saved")
+        }
+        await SavedProduct.create({
+            user_id : req.userId,
+            product_id : id
+        })
+        return res.status(200).json({
+            isSuccess: true,
+            message: "Product saved",
+        })
+    }catch(error){
+        return res.status(401).json({
+            isSuccess: false,
+            message: error.message
+        })
+    }
+}
+
+exports.getSavedProducts = async(req,res)=>{
+    try{
+        const productDocs = await SavedProduct.find({user_id : req.userId}).populate('product_id',
+             "name category images price description")
+
+        if(!productDocs || productDocs.length === 0){
+            throw new Error("No product are not saved yet!")
+        }
+        return res.status(200).json({
+            isSuccess: true,
+            productDocs,
+        })
+    }catch(error){
+        return res.status(404).json({
+            isSuccess: false,
+            message: error.message,
+            })
+    }
+}
+
+exports.unSavedProduct= async(req,res) =>{
+    try{
+        const {id} = req.params;
+        await SavedProduct.findOneAndDelete({product_id : id})
+        return res.status(200).json({
+            isSuccess: true,
+            message: "Product removed from saved list"
+        })
+    }catch(error){
+        return res.status(500).json({
+            isSuccess: false,
+            message: error.message,
+            })
+    }
 }

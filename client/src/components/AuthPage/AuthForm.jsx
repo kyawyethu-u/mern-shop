@@ -21,7 +21,6 @@ const AuthForm = ({isLoginPage}) => {
         if(isLoginPage){
         try{
           const response = await loginUser(values);
-          console.log(response.token);
           
           if(response.isSuccess){
               message.success(response.message);

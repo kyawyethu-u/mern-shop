@@ -1,6 +1,7 @@
 
 const Product = require("../models/Product");
 
+//filtered by category
 exports.getProductCategories = async(req,res) =>{
     try{
         const productDocs = await Product.find({})
@@ -17,6 +18,7 @@ exports.getProductCategories = async(req,res) =>{
     }
 }  
 
+
 exports.getApprovedProducts = async(req,res) => {
    try{
     const productDocs= await Product.find({status: "approve"}).sort({createdAt: -1})
@@ -30,7 +32,7 @@ exports.getApprovedProducts = async(req,res) => {
         message: err.message,
         })
 }}
-
+//input box search
 exports.getProductsByFilter = async(req,res) =>{
     try{
         const {searchKey,category} = req.query;
@@ -56,9 +58,8 @@ exports.getProductsByFilter = async(req,res) =>{
         })
     }
 }
-
+//detail page
 exports.getProductById = async(req,res) =>{
-
     try{
         const productDoc = await Product.findById(req.params.id).populate("seller", "email name")
         if(!productDoc){

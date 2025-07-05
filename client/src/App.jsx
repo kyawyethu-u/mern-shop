@@ -9,7 +9,7 @@ import Profile from './pages/profile/Index.jsx'
 import Admin from './pages/admin/Index.jsx'
 import AuthProvider from './providers/AuthProvider.jsx'
 import Details from './pages/Homepage/Details.jsx'
-
+import SavedProducts from './pages/SavedProducts/Index.jsx'
 
 
 const App = () => {
@@ -51,6 +51,12 @@ const App = () => {
           {
             path: "/products/:id",
             element: <Details/>
+          },
+          {
+            path: "/saved-products",
+            element: (<AuthProvider>
+                 <SavedProducts/>
+                 </AuthProvider>)
           }
         ]
       },
