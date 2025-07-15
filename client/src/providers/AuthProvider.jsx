@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { checkCurrentUser } from '../apicalls/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -20,7 +20,7 @@ const AuthProvider = ({children}) => {
                 throw new Error(response.message);
               }  
             } catch (err) {
-             console.log(err.messsage);
+             console.error(err.messsage);
             }
     }
     useEffect((_)=>{

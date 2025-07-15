@@ -7,22 +7,25 @@ import {setLoader} from "../../store/slices/loaderSlice"
 
 //productCats for categories
 const Filter = ({productCats,setProducts,getAllProducts}) => {
+   const dispatch = useDispatch();
   const [selectedCategory,setSelectedCategory] = useState(null)
   const uniqueCategories = [...new Set(productCats.map((product)=> product.category))]
 
+  
   const categoryHandler = async(i) =>{
-    const dispatch = useDispatch();
-    setSelectedCategory(uniqueCategories[i]);
+    const category = uniqueCategories[i];
+    setSelectedCategory(category);
+    
     dispatch(setLoader(true));
             try{
-              const response = await getProductsByFilter("category",selectedCategory);
+              const response = await getProductsByFilter("category",category);
               if(response.isSuccess){
                 setProducts(response.productDocs)
               }else{
                 throw new Error(response.message)
               }
             }catch(err){
-              message.error = err.message
+              message.error(err.message)
             }
             dispatch(setLoader(false));        
   }
@@ -36,7 +39,7 @@ const Filter = ({productCats,setProducts,getAllProducts}) => {
       {uniqueCategories.map((category, index) => (
         <p key={index} 
         className={`px-2 py-1 rounded-md text-sm cursor-pointer border border-blue-600 border-solid text-blue-600 ${
-          index === selectedCategory && "border-dashed"}`}
+          category === selectedCategory && "border-dashed"}`}
            onClick={()=>categoryHandler(index)}>
           {category.replace(/_/g, ' ')}
         </p>

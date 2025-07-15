@@ -7,6 +7,8 @@ import General from "./General"
 import { useEffect, useState } from "react";
 import { getAllProducts } from "../../apicalls/product"
 import { BellAlertIcon, SquaresPlusIcon, SwatchIcon, UserIcon } from "@heroicons/react/24/solid";
+import { getAllNoti } from "../../apicalls/notification";
+import Notifications from "./Notifications";
 
 
 const Index = () => {
@@ -14,6 +16,7 @@ const Index = () => {
   const [activeTabKey,setActiveTabKey] = useState("1")
   const [products,setProducts] = useState([])
   const [editMode,setEditMode] = useState(false)
+  const [notifications,setNotifications] = useState()
   const [editProductId,setEditProductId] = useState(null)
   const [manageTabKey,setManageTabKey] = useState("1")
 
@@ -30,6 +33,18 @@ const Index = () => {
           message.error(err.message)
       }
   };
+  const getNoti = async()=>{
+    try{
+      const response = await getAllNoti()
+      if(response.isSuccess){
+        setNotifications(response.notiDocs)
+      }else{
+        throw new Error(response.message)    
+       }
+    }catch(err){
+      console.error(err.message)
+    }
+  }
 
   useEffect((_) =>{
     if(activeTabKey === "1"){
@@ -38,6 +53,7 @@ const Index = () => {
       setManageTabKey("1");
     };
       getProducts();
+      getNoti();
   },[activeTabKey])
 
     
@@ -73,7 +89,7 @@ const Index = () => {
                 Notifications
               </span>
             ),
-            children: 'Content of Tab Pane 2',
+            children: <Notifications notifications={notifications}/>,
           },
           {
             key: '4',

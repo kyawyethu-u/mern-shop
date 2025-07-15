@@ -1,22 +1,33 @@
-import { Form, Input, message } from 'antd';
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getProductById } from '../../apicalls/product';
+
+import { Form, Input, message } from 'antd';
+import {formatDistanceToNow} from "date-fns"
+import {RotatingLines} from "react-loader-spinner"
+import { ChevronDoubleLeftIcon,PaperAirplaneIcon } from '@heroicons/react/24/outline';
+
 import pointpic from '../../images/pointpic.jpg'
 
 import {useDispatch,useSelector} from "react-redux"
 import {setLoader} from "../../store/slices/loaderSlice"
-import {RotatingLines} from "react-loader-spinner"
-import { ChevronDoubleLeftIcon,PaperAirplaneIcon } from '@heroicons/react/24/outline';
+
+import { getAllBids, savedNewBid } from '../../apicalls/bid';
+import { getProductById } from '../../apicalls/product';
+import { notify } from '../../apicalls/notification';
 
 const Details = () => {
     const [product,setProduct] = useState({});
     const [selectedImage,setSelectedImage] = useState(0)
+    const [isPlaced,setIsPlaced] = useState(false);
+    const [bids,setBids] = useState([]);
+
     const dispatch = useDispatch();
-    const {isProcessing} = useSelector((state)=>state.reducer.loader)
-    const {user} = useSelector((state)=>state.reducer.user)
     const navigate = useNavigate();
     const params = useParams();
+    const [form] = Form.useForm();
+
+    const {isProcessing} = useSelector((state)=>state.reducer.loader)
+    const {user} = useSelector((state)=>state.reducer.user)
   
     
     const findById =async() =>{
@@ -33,9 +44,51 @@ const Details = () => {
         }
         dispatch(setLoader(false));
     }
+
+    const getBids = async() =>{
+        try{
+            const response = await getAllBids(params.id)
+            if(response.isSuccess){
+                setBids(response.bidDocs)
+            }else{
+                throw new Error(response.message)
+            }
+        }catch(err){
+            console.error = err.message;
+        }
+       
+    }
+    
     useEffect(()=>{
         findById()
+        getBids()
     },[])
+         
+    const onFinishHandler = async(values) => {
+        setIsPlaced(true)
+        values.product_id = product._id;
+        values.seller_id  = product.seller._id;
+        values.buyer_id  = user._id;
+        try{
+            const response = await savedNewBid(values);
+            if(response.isSuccess){
+                 getBids()
+               form.resetFields();
+               message.success(response.message);
+               await notify({title: "New bid placed",
+                message: `New bid is placed in ${product.name} by ${user.name}.`,
+                owner_id: product.seller._id,
+                product_id: product._id,
+                phone_number: values.phone})
+            }else{
+                throw new Error(response.message);
+            }
+        }catch(err){
+            message.error(err.message)
+        }
+       setIsPlaced(false)
+    }     
+
    
   return (
     <section className={`mt-20 flex ${isProcessing ? "items-center justify-center": "items-start justify-between"}`} >
@@ -128,7 +181,7 @@ const Details = () => {
                 </div>
                 <hr/>
                 <h1 className='text-2xl font-semibold my-2'>Seller Information</h1>
-                <div className='flex justify-between'>
+                <div className='flex justify-between mb-2'>
                     <div className='font-medium space-y-2'>
                         <p>Name</p>
                         <p>Email</p>
@@ -138,13 +191,13 @@ const Details = () => {
                         <p>{product.seller.email}</p>
                     </div>
                 </div>
-                <hr />
-                <h1 className='text-2xl font-semibold my-2'>Bids</h1>
+                
+                <hr/>
+                <h1 className='text-2xl font-semibold my-2'>Make an offer</h1>
                {
-                user ?  <div>
-                <Form onFinish={()=>{
-                    window.alert("Commented")
-                }}
+                user && user._id !== product.seller._id &&(
+                <div className='mb-10'>
+                <Form onFinish={onFinishHandler}
                     layout="vertical">
                     
                     <Form.Item name="message"
@@ -182,14 +235,45 @@ const Details = () => {
                     </Form.Item>
                     <div className='text-right mb-3'>
                     <button className='text-white font-medium text-base px-2 py-1 rounded-md bg-blue-600'>
-                    Submit</button>
+                    {isPlaced && "Submitting message... "}
+                    {!isPlaced && "Submit"}
+                    </button>
                     </div>
                 </Form>
-                </div>:
-                <p className='mb-5 font-medium text-red-600'>
+                </div>
+                )}
+               {
+                 user && user._id === product.seller._id &&(
+                    <p className='mb-5 font-medium text-red-600'>
+                        You are product seller/owner.You can't place bid.
+                    </p>
+                  )
+                }
+                {
+                 !user && (
+                 <p className='mb-5 font-medium text-red-600'>
                     <Link to={"/login"}>Login</Link> or {" "}
-                    <Link to={"/register"}>register</Link> to get full access</p>
-               }
+                    <Link to={"/register"}>register</Link> to get full access</p>)
+                }
+                <hr />
+                <h1 className='text-2xl font-semibold my-2'>Recent </h1>
+                <div>
+                    {
+                        bids.map((bid)=>(
+                            <div className='mb-4 bg-white px-2 py-4 rounded-lg'>
+                                <h5 className='font-md text-base'>{bid.buyer_id.name}</h5>
+                                <p className='text-xs text-gray-400 '>{formatDistanceToNow(new Date(bid.createdAt))} ago</p>
+                                <p className='text-gray-600 text-sm font-md'>{bid.text}</p>
+                            </div>
+                        ))
+                    }
+                </div>
+                <div>
+                    {
+                    bids.length === 0 && <p className='my-2 font-md text-red-600'>No bids are not placed yet</p>
+                    }
+                </div>
+                <hr />
              </div>
              </>
             )}

@@ -72,7 +72,8 @@ const Index = () => {
     </div>
     }
      {
-      products.length === 0 && <p>No product are not saved yet</p>
+      products.length === 0 && 
+       !isProcessing && <p className='font-medium text-red-600 my-2'>No product are not saved yet</p>
      }
    </section>
   )

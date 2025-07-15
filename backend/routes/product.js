@@ -4,6 +4,8 @@ const {body} = require("express-validator")
 const router = Router()
 
 const productController = require("../controllers/product")
+const bidController = require("../controllers/bid")
+const notificationController = require("../controllers/notification")
 const authMiddleware = require("../middlewares/auth")
 
 //add product
@@ -63,5 +65,23 @@ router.get("/saved-products",authMiddleware,productController.getSavedProducts)
 //delete saved product
 //DELETE /unsaved-products/:id
 router.delete("/unsaved-products/:id",authMiddleware,productController.unSavedProduct)
+
+//save new bid
+//POST /add-bid
+router.post("/add-bid",[
+     body("message").trim().notEmpty().withMessage("Message must have!"),
+     body("phone").trim().notEmpty().withMessage("Phone number must have!"),
+    ],authMiddleware,bidController.savedNewBid)
+
+//get all bids
+//GET /bids/:product_id
+router.get("/bids/:product_id",bidController.getAllBids)  
+
+//push noti
+//POST /notify
+router.post("/notify",authMiddleware,notificationController.pushNotification)
+
+//get all notifications
+router.get("/notifications",authMiddleware,notificationController.getNotifications)
 
 module.exports = router;

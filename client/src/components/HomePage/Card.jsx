@@ -3,11 +3,13 @@ import { BookmarkIcon, BookmarkSlashIcon } from "@heroicons/react/24/outline"
 import { BookmarkIcon as BookMark } from "@heroicons/react/24/solid"
 import {Link} from "react-router-dom"
 import {message} from "antd"
-import { deleteSavedProduct, savedProduct } from "../../apicalls/product"
+import { deleteSavedProduct, getAllProducts, savedProduct } from "../../apicalls/product"
 import { useSelector } from "react-redux"
+
 
 const Card = ({product,saved = false,getProducts,savedProducts,getSavedProduct}) => {
   const {user} = useSelector((state)=>state.reducer.user);
+
   const saveStatusHandler = async(id)=>{
     try{
         let response;
@@ -33,7 +35,8 @@ const Card = ({product,saved = false,getProducts,savedProducts,getSavedProduct})
   const isProductSaved = (product) =>{
     return savedProducts.some(p=>p.product_id._id === product._id)
   }
-  
+ 
+
   return (
     <div className={`${saved && "basis-1/4"} bg-white p-4 rounded-lg`}>
         <>

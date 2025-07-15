@@ -10,7 +10,8 @@ import {setLoader} from "../../store/slices/loaderSlice"
 const Hero = ({setProducts,getAllProducts}) => {
   const [searchKey,setSearchKey] = useState("");
   const dispatch = useDispatch();
-
+  
+  
   const searchHandler = async() =>{
     dispatch(setLoader(true));
     try{

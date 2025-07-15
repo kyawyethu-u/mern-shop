@@ -10,6 +10,7 @@ import {getProductCategories,getApprovedProducts, getSavedProducts } from '../..
 import {useDispatch,useSelector} from "react-redux"
 import {setLoader} from "../../store/slices/loaderSlice"
 import {RotatingLines} from "react-loader-spinner"
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -21,6 +22,7 @@ const Index = () => {
   const {isProcessing} = useSelector((state)=>state.reducer.loader)
 
   const getCategories = async() =>{
+    
     dispatch(setLoader(true));
     try{
       const response = await getProductCategories()
@@ -70,7 +72,7 @@ const Index = () => {
   useEffect((_)=>{
     getCategories()
     getAllProducts()
-   
+    getSavedProduct()
   },[])
   return (
     <section>
@@ -96,7 +98,7 @@ const Index = () => {
         <div className='grid grid-cols-2 gap-4 max-w-4xl mx-auto'>
         {
             products.map((product)=><Card key={product._id} product={product} savedProducts={savedProducts} 
-            getAllProducts={getAllProducts} getSavedProduct={getSavedProduct}/>)
+             getSavedProduct={getSavedProduct}/>)
         }
         </div>
       }
