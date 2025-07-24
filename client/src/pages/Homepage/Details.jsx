@@ -15,6 +15,7 @@ import { getAllBids, savedNewBid } from '../../apicalls/bid';
 import { getProductById } from '../../apicalls/product';
 import { notify } from '../../apicalls/notification';
 
+
 const Details = () => {
     const [product,setProduct] = useState({});
     const [selectedImage,setSelectedImage] = useState(0)
@@ -56,9 +57,7 @@ const Details = () => {
         }catch(err){
             console.error = err.message;
         }
-       
-    }
-    
+        }
     useEffect(()=>{
         findById()
         getBids()
@@ -88,8 +87,6 @@ const Details = () => {
         }
        setIsPlaced(false)
     }     
-
-   
   return (
     <section className={`mt-20 flex ${isProcessing ? "items-center justify-center": "items-start justify-between"}`} >
       {

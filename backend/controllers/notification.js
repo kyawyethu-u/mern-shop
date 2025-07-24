@@ -40,3 +40,63 @@ exports.getNotifications = async(req,res) =>{
         })
     }
 }
+
+exports.markAsRead = async(req,res) =>{
+    const {id} = req.params;
+    try{
+        const notiDoc = await Notification.findById(id)
+        if(req.userId.toString() !== notiDoc.owner_id.toString()){
+        throw new Error("Authorization Failed!")
+        }
+        if(!notiDoc){
+            throw new Error("Notifications not found!")
+        }
+        notiDoc.isRead = true;
+        notiDoc.save();
+        return res.status(200).json({
+            isSuccess: true,
+            message: "Done",
+            notiDoc,
+        })
+    }catch(err){
+        return res.status(500).json({
+            isSuccess: false,
+            message : err.message
+        })
+    }
+}
+
+exports.deleteNoti = async(req,res) =>{
+    const {id} = req.params;
+    try{
+        const notiDoc = await Notification.findById(id);
+        if(req.userId.toString() !== notiDoc.owner_id.toString()){
+        throw new Error("Authorization Failed!")
+        }
+        await Notification.findByIdAndDelete(id)
+        return res.status(200).json({
+            isSuccess: true,
+            message: "Notification was deleted"
+        })
+    }catch(err){
+        return res.status(500).json({
+            isSuccess: false,
+            message: err.message
+        })
+    }
+}
+
+exports.deleteAllNoti = async(req,res) =>{
+    try{
+        await Notification.deleteMany({owner_id: req.userId})
+        return res.status(200).json({
+            isSuccess: true,
+            message: "Notifications are cleared"
+        })
+    }catch(err){
+        return res.status(500).json({
+            isSuccess: false,
+            message: err.message
+        })
+    }
+}

@@ -130,15 +130,15 @@ exports.deleteProduct = async(req,res) =>{
     const {id} = req.params;
     try{
         const productDoc = await Product.findOne({_id: id});
+        if(req.userId.toString() !== productDoc.seller.toString()){
+            throw new Error("Authorization Failed!")
+       };
         if(!productDoc){
             return res.status(404).json({
                 isSuccess: true,
                 message: "Product not found!",
                })
         }
-        if(req.userId.toString() !== productDoc.seller.toString()){
-            throw new Error("Authorization Failed!")
-       };
         if(productDoc.images && Array.isArray(productDoc.images)){
             const deletePromise = productDoc.images.map((img)=> {
                 const publicId = img.substring(
@@ -172,6 +172,11 @@ exports.uploadProductImages = async(req,res) =>{
     const productImages = req.files;
     const productId = req.body.product_id;
     let secureUrlArray = [];
+
+    const productDoc = await Product.findOne({_id: productId})
+    if(req.userId.toString() !== productDoc.seller.toString()){
+        throw new Error("Authorization Failed!")
+    }
     try{
         productImages.forEach((img) => {
             cloudinary.uploader.upload(
@@ -203,7 +208,10 @@ exports.uploadProductImages = async(req,res) =>{
 exports.getSavedImages = async(req,res) =>{
     const {id} = req.params;
     try{
-        const productDoc = await Product.findById(id).select("images");
+        const productDoc = await Product.findById(id).select("images")
+        if(req.userId.toString() !== productDoc.seller.toString()){
+        throw new Error("Authorization Failed!")
+        }
         if(!productDoc){
             throw new Error("Product not found")
         }
@@ -222,10 +230,13 @@ exports.getSavedImages = async(req,res) =>{
 }
 
 exports.deleteProductImages = async(req,res) =>{
-   
    try{
     const productId = req.params.productId;
     const decodeImgToDelete = decodeURIComponent(req.params.imgToDelete);
+    const productDoc = await Product.findOne({_id: productId})
+    if(req.userId.toString() !== productDoc.seller.toString()){
+        throw new Error("Authorization Failed!")
+    }
     await Product.findByIdAndUpdate(productId,{$pull: {images: decodeImgToDelete}})
     const publicId = decodeImgToDelete.substring(
         decodeImgToDelete.lastIndexOf("/") + 1,
@@ -235,9 +246,7 @@ exports.deleteProductImages = async(req,res) =>{
     return res.status(200).json({
         isSuccess: true,
         message: "Product image destroyed.",
-       
     })
-
    }catch(err){
     return res.status(404).json({
         isSuccess: false,
@@ -247,7 +256,6 @@ exports.deleteProductImages = async(req,res) =>{
 }
 
 exports.savedProduct = async(req,res) =>{
-    
     try{
         const {id} = req.params;
         const isExists = await SavedProduct.findOne({$and :[{user_id: req.userId},{product_id: id}],

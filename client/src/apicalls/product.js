@@ -94,6 +94,37 @@ export const deleteSavedImages = async(payload) =>{
     }
 }
 
+//save product
+  export const savedProduct = async(id)=>{
+    try{
+        const response = await axiosInstance.post(`/saved-products/${id}`)
+        return response.data;
+    }catch(err){
+        return err.message
+    }
+  }
+
+  //get saved products
+  export const getSavedProducts = async()=>{
+    try{
+        const response = await axiosInstance.get(`/saved-products`,{
+            validateStatus: () => true})
+        return response.data;
+    }catch(err){
+        return err.message
+    }
+  }
+
+export const deleteSavedProduct = async(id)=>{
+    try{
+        const response = await axiosInstance.delete(`/unsaved-products/${id}`)
+
+        return response.data;
+    }catch(err){
+        return err.message
+    }
+}
+
 ////////////   Public   /////////////////////////////
 //get product categories for home page
 export const getProductCategories = async() =>{
@@ -106,9 +137,9 @@ export const getProductCategories = async() =>{
   }
 
   //   /api/products
-  export const getApprovedProducts = async() =>{
+  export const getApprovedProducts = async(page,perPage) =>{
     try{
-        const response = await axiosInstance.get("/api/products")
+        const response = await axiosInstance.get(`/api/products?page=${page}&perPage=${perPage}`)
         return response.data;
     }catch(error){
         return error.message
@@ -135,33 +166,4 @@ export const getProductCategories = async() =>{
     }
   }
   
-  //save product
-  export const savedProduct = async(id)=>{
-    try{
-        const response = await axiosInstance.post(`/saved-products/${id}`)
-        return response.data;
-    }catch(err){
-        return err.message
-    }
-  }
-
-  //get saved product
-  export const getSavedProducts = async()=>{
-    try{
-        const response = await axiosInstance.get(`/saved-products`,{
-            validateStatus: () => true})
-        return response.data;
-    }catch(err){
-        return err.message
-    }
-  }
-
-export const deleteSavedProduct = async(id)=>{
-    try{
-        const response = await axiosInstance.delete(`/unsaved-products/${id}`)
-
-        return response.data;
-    }catch(err){
-        return err.message
-    }
-}
+  

@@ -6,13 +6,8 @@ import LineCustomChart from '../../components/dashboard/LineCustomChart';
 import BarList from '../../components/dashboard/BarList';
 
 
-
-
-
-
-const Dashbord = ({products,users}) => {
+const Dashbord = ({products,users,totalProducts}) => {
   const [totalSales,setTotalSales] = useState(0);
-  const [productCount,setProductCount] = useState(0);
   const [userCount,setUserCount] = useState(0)
 
   const calcTotalSales = () =>{
@@ -25,16 +20,15 @@ const Dashbord = ({products,users}) => {
   useEffect(() =>{
     if(products.length){
       calcTotalSales()
-      setProductCount(products.length)
       setUserCount(users.length)
     }
   },[products])
   
   return <section>
-    <div className='flex items-center gap-2 mt-2 mb-4'>
+    <div className='flex items-center gap-2 mt-2 mb-4 '>
       <CardAntd title={"Total Sales"} count={`${totalSales} MMK`} icon={<BanknotesIcon />} note={"MMK"}/>
       <CardAntd title={"Active Users"} count={userCount} icon={<UserGroupIcon />} note={"users"}/>
-      <CardAntd title={"Products"} count={productCount} icon={<ShoppingCartIcon />} note={"items"}/>
+      <CardAntd title={"Products"} count={totalProducts} icon={<ShoppingCartIcon />} note={"items"}/>
     </div>
    <LineCustomChart/>
    <BarList/>

@@ -2,12 +2,20 @@ const Product = require("../models/Product")
 const User = require("../models/User")
 
 exports.getAllProducts = async(req,res) =>{
+   const page = parseInt(req.query.page) || 1;
+   const perPage = 10;
    try{
-     const productDocs = await Product.find().populate("seller","name").sort({createdAt: -1});
-     
+     const productDocs = await Product.find().populate("seller","name")
+                        .sort({createdAt: -1}).skip((page -1)*perPage).limit(perPage);
+     const totalProducts = await Product.countDocuments();
+     const totalPages = Math.ceil(totalProducts/perPage);
+
      return res.status(200).json({
         isSuccess : true,
         productDocs,
+        totalPages,
+        totalProducts,
+        currentPage: page, 
      })
 }catch(err){
      return res.status(422).json({

@@ -1,10 +1,9 @@
 import moment from 'moment'
-import React from 'react'
-import { approveProduct, rejectProduct, rollbackProduct } from '../../apicalls/admin'
-import { message } from 'antd'
+import { approveProduct,rejectProduct, rollbackProduct } from '../../apicalls/admin'
+import { message, Pagination } from 'antd'
 
-const Products = ({products,getProducts}) => {
- 
+
+const Products = ({products,getProducts,currentPage,totalPages}) => {
 
   const approveHandler = async(productId) =>{
     try{
@@ -12,6 +11,7 @@ const Products = ({products,getProducts}) => {
         if(response.isSuccess){
             message.success(response.message)
             getProducts();
+
         }else{
             throw new Error(response.message)
         }
@@ -46,6 +46,9 @@ const Products = ({products,getProducts}) => {
     }catch(err){
         message.error(err.message);
     }
+  }
+  const handlePagination =(page,perPage) =>{
+    getProducts(page,perPage)
   }
   return (
     <section>
@@ -122,7 +125,12 @@ const Products = ({products,getProducts}) => {
             </tbody>
         </table>
     </div>
-    
+    <div className='flex justify-end my-10'>
+        <Pagination current={currentPage}
+        total={totalPages * 10}
+        pageSize={10}
+        onChange={handlePagination}/>
+    </div>
       </section>
   )
 }

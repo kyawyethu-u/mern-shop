@@ -1,15 +1,15 @@
-import { Form, Tabs,message } from "antd"
+import { useEffect, useState } from "react";
+
+import { Form, message, Tabs } from "antd"
+
+import { BellAlertIcon, SquaresPlusIcon, SwatchIcon, UserIcon } from "@heroicons/react/24/solid";
+
+import General from "./General"
 import Products from "./Products"
 import ManageProduct from "./ManageProduct"
-import General from "./General"
-
-
-import { useEffect, useState } from "react";
-import { getAllProducts } from "../../apicalls/product"
-import { BellAlertIcon, SquaresPlusIcon, SwatchIcon, UserIcon } from "@heroicons/react/24/solid";
-import { getAllNoti } from "../../apicalls/notification";
 import Notifications from "./Notifications";
-
+import { getAllProducts } from "../../apicalls/product"
+import { getAllNoti } from "../../apicalls/notification";
 
 const Index = () => {
 
@@ -89,7 +89,7 @@ const Index = () => {
                 Notifications
               </span>
             ),
-            children: <Notifications notifications={notifications}/>,
+            children: <Notifications notifications={notifications} getNoti={getNoti}/>,
           },
           {
             key: '4',

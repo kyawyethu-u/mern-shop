@@ -13,6 +13,9 @@ const Hero = ({setProducts,getAllProducts}) => {
   
   
   const searchHandler = async() =>{
+    if(searchKey.trim().length === 0){
+      return message.error("Search key must have.")
+    }
     dispatch(setLoader(true));
     try{
       const response = await getProductsByFilter("searchKey",searchKey)
@@ -34,7 +37,7 @@ const Hero = ({setProducts,getAllProducts}) => {
   return (
     <div className='w-full text-center mb-2 mt-10'>
         <h1 className='text-4xl font-bold text-blue-600 mb-4'>"Welcome"</h1>
-        <p className='text-lg font-medium text-gray-500 max-w-xl mx-auto mb-4'>Your one-stop destination for unique finds, trusted sellers, and great deals—right here in your neighborhood.</p>
+        <p className='text-lg font-md text-gray-500 max-w-xl mx-auto mb-4'>Your one-stop destination for unique finds, trusted sellers, and great deals—right here in your neighborhood.</p>
         <div className='max-w-sm mx-auto flex items-center gap-2'>
           <div className="relative w-full">
             <input type='text' className='bg-gray-100 outline-none p-2 rounded-xl w-full' 

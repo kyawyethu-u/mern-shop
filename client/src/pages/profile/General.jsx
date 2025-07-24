@@ -1,8 +1,11 @@
 import React from 'react'
-import { useDispatch,useSelector } from 'react-redux'
-import { setUser } from '../../store/slices/userSlice';
+
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux'
+
 import { PowerIcon } from '@heroicons/react/24/solid';
+
+import { setUser } from '../../store/slices/userSlice';
 
 const General = () => {
   const dispatch = useDispatch()

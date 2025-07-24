@@ -16,6 +16,9 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/solid";
 
+import Notifications from "./Notifications";
+import { getAllNoti } from "../../apicalls/notification";
+
 
 const Index = () => {
   const { user } = useSelector((state) => state.reducer.user);
@@ -24,6 +27,10 @@ const Index = () => {
   const [activeTabKey, setActiveTabKey] = useState("1");
   const [products, setProducts] = useState([]);
   const [users,setUsers] =useState([]);
+  const [notifications,setNotifications] = useState()
+  const [currentPage,setCurrentPage] = useState(1)
+  const [totalPages,setTotalPages] = useState(0)
+  const [totalProducts,setTotalProducts] = useState()
 
   const onChangeHandler = (key) => {
     setActiveTabKey(key);
@@ -42,11 +49,15 @@ const Index = () => {
     }
   };
 
-  const getProducts = async () => {
+  const getProducts = async (page=1,perPage=10) => {
+
     try {
-      const response = await getAllProducts();
+      const response = await getAllProducts(page,perPage);
       if (response.isSuccess) {
         setProducts(response.productDocs);
+        setCurrentPage(response.currentPage);
+        setTotalPages(response.totalPages)
+        setTotalProducts(response.totalProducts)
       } else {
         throw new Error(response.message);
       }
@@ -59,14 +70,26 @@ const Index = () => {
     if (user.role !== "admin") {
       navigate("/");
     }
-
   };
+  const getNoti = async()=>{
+      try{
+        const response = await getAllNoti()
+        if(response.isSuccess){
+          setNotifications(response.notiDocs)
+        }else{
+          throw new Error(response.message)    
+         }
+      }catch(err){
+        console.error(err.message)
+      }
+    }
 
   useEffect(
     (_) => {
       isAdmin();
-      getProducts();
+      getProducts(1,10);
       getUsers();
+      getNoti()
     },
     [activeTabKey]
   );
@@ -80,7 +103,7 @@ const Index = () => {
           Dashboard
         </span>
       ),
-      children: <Dashbord products={products} users={users} />,
+      children: <Dashbord products={products} users={users} totalProducts={totalProducts}/>,
     },
     {
       key: "2",
@@ -90,7 +113,9 @@ const Index = () => {
           Manage Products
         </span>
       ),
-      children: <Products products={products} getProducts={getProducts} />,
+      children: <Products products={products} getProducts={getProducts} 
+      currentPage={currentPage} 
+      totalPages={totalPages}/>,
     },
     {
       key: "3",
@@ -110,7 +135,7 @@ const Index = () => {
           Notifications
         </span>
       ),
-      children: "Content of Tab Pane 2",
+      children: <Notifications notifications={notifications}/>,
     },
     {
       key: "5",

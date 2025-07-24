@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
-import { message } from 'antd';
+
+import {RotatingLines} from "react-loader-spinner"
+import { message, Pagination } from 'antd';
+
+import {useDispatch,useSelector} from "react-redux"
+import {setLoader} from "../../store/slices/loaderSlice"
 
 import Hero from '../../components/HomePage/Hero'
 import Filter from '../../components/HomePage/Filter'
@@ -7,43 +12,41 @@ import Card from '../../components/HomePage/Card';
 
 import {getProductCategories,getApprovedProducts, getSavedProducts } from '../../apicalls/product';
 
-import {useDispatch,useSelector} from "react-redux"
-import {setLoader} from "../../store/slices/loaderSlice"
-import {RotatingLines} from "react-loader-spinner"
-import { useLocation } from 'react-router-dom';
-
 
 
 const Index = () => {
   const [productCats, setProductCats] = useState([]);
   const [products,setProducts] = useState([]);
   const [savedProducts,setSavedProducts] = useState([])
+  const [currentPage,setCurrentPage] = useState(1)
+  const [totalProducts,setTotalProducts] = useState(0)
+
   const dispatch = useDispatch();
   const {isProcessing} = useSelector((state)=>state.reducer.loader)
 
   const getCategories = async() =>{
-    
-    dispatch(setLoader(true));
-    try{
-      const response = await getProductCategories()
-      
-      if(response.isSuccess){
-        setProductCats(response.productDocs)
-      }else{
-        throw new Error(response.message)
+      dispatch(setLoader(true));
+      try{
+        const response = await getProductCategories()
+        if(response.isSuccess){
+          setProductCats(response.productDocs)
+        }else{
+          throw new Error(response.message)
+        }
+      }catch(err){
+        message.error(err.message);
       }
-    }catch(err){
-      message.error(err.message);
-    }
-    dispatch(setLoader(false));
+      dispatch(setLoader(false));
   };
 
-  const getAllProducts = async() =>{
+  const getAllProducts = async(page=1,perPage=6) =>{
     dispatch(setLoader(true));
     try{
-      const response = await getApprovedProducts()
+      const response = await getApprovedProducts(page,perPage)
       if(response.isSuccess){
         setProducts(response.productDocs)
+        setCurrentPage(response.currentPage)
+        setTotalProducts(response.totalProducts)
       }else{
         throw new Error(response.message)
       }
@@ -52,7 +55,6 @@ const Index = () => {
     }
     dispatch(setLoader(false));
   }
-
   const getSavedProduct = async()=>{
     dispatch(setLoader(true));
     try{
@@ -63,17 +65,18 @@ const Index = () => {
         throw new Error(response.message)
       }
     }catch(err){
-      console.error(err.message)
+      message.error(err.message)
     }
     dispatch(setLoader(false))
   }
-
-  
   useEffect((_)=>{
     getCategories()
-    getAllProducts()
+    getAllProducts(1,6)
     getSavedProduct()
   },[])
+  const handlePagination = (page,perPage) =>{
+    getAllProducts(page,perPage)
+  }
   return (
     <section>
       <Hero setProducts={setProducts} getAllProducts={getAllProducts}/>
@@ -95,12 +98,20 @@ const Index = () => {
             />
           </div>
         ) :
-        <div className='grid grid-cols-2 gap-4 max-w-4xl mx-auto'>
+        <>
+           <div className='grid grid-cols-3 gap-4 max-w-6xl mx-auto'>
         {
             products.map((product)=><Card key={product._id} product={product} savedProducts={savedProducts} 
              getSavedProduct={getSavedProduct}/>)
         }
         </div>
+        <div className='flex mt-5 mb-5 justify-end max-w-6xl mx-auto'>
+          <Pagination current={currentPage} 
+          total={totalProducts} 
+          pageSize={6}
+          onChange={handlePagination}/>
+        </div>
+        </>
       }
     </section>
   )

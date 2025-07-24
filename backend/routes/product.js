@@ -58,7 +58,7 @@ router.delete("/product/images/destroy/:productId/:imgToDelete",authMiddleware,p
 //POST /saved-products/:id
 router.post("/saved-products/:id",authMiddleware,productController.savedProduct)
 
-//get saved product
+//get saved products
 //GET /saved-products
 router.get("/saved-products",authMiddleware,productController.getSavedProducts)
 
@@ -82,6 +82,20 @@ router.get("/bids/:product_id",bidController.getAllBids)
 router.post("/notify",authMiddleware,notificationController.pushNotification)
 
 //get all notifications
+//GET /notifications
 router.get("/notifications",authMiddleware,notificationController.getNotifications)
+
+//make noti as read
+//GET /notifications-read/:id
+router.get("/notifications-read/:id",authMiddleware,notificationController.markAsRead)
+
+//delete noti
+//DELETE /notification-delete/:id
+router.delete("/notification-delete/:id",authMiddleware,notificationController.deleteNoti)
+
+//delete all noti
+//DELETE /notification-delete-all
+router.delete("/notification-delete-all",authMiddleware,notificationController.deleteAllNoti)
+
 
 module.exports = router;
